@@ -155,35 +155,41 @@ class Statistics extends Component {
             ));
         }
 
+        // This should be a function called by the parent component
         // Sets the winner BG as fullscreen
         const delay = 15000;
         const winningPlayerIndex = this.playerScores[0].totalScore.score > this.playerScores[1].totalScore.score ? 0 : 1;
         const losingPlayerIndex = winningPlayerIndex === 1 ? 0 : 1;
         setTimeout(() => {
             // Animate Names
-            document.querySelectorAll('.player')[winningPlayerIndex].classList.add('player--victor');
-            document.querySelectorAll('.player')[losingPlayerIndex].classList.add('player--loser');
+            if(document.querySelector('.player')) {
+                document.querySelectorAll('.player')[winningPlayerIndex].classList.add('player--victor');
+                document.querySelectorAll('.player')[losingPlayerIndex].classList.add('player--loser');
 
-            // Animate Overlay
-            document.querySelectorAll('.char-overlay__bg')[winningPlayerIndex].classList.add('char-overlay__bg--fullscreen');
-
-            setTimeout(() => {
-                document.querySelector('.statistics__area').classList.add('statistics__area--min');
+                // Animate Overlay
+                document.querySelectorAll('.char-overlay__bg')[winningPlayerIndex].classList.add('char-overlay__bg--fullscreen');
 
                 setTimeout(() => {
-                    let playerOneTitleSmall = document.createElement('span');
-                    playerOneTitleSmall.innerText = this.props.data[0].name;
-                    playerOneTitleSmall.className = `statistic-name ${winningPlayerIndex < 1 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
+                    document.querySelector('.statistics__area').classList.add('statistics__area--min');
 
-                    let playerTwoTitleSmall = document.createElement('span');
-                    playerTwoTitleSmall.innerText = this.props.data[1].name;
-                    playerTwoTitleSmall.className = `statistic-name ${winningPlayerIndex > 0 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
+                    setTimeout(() => {
+                        let playerOneTitleSmall = document.createElement('span');
+                        playerOneTitleSmall.innerText = this.props.data[0].name;
+                        playerOneTitleSmall.className = `statistic-name ${winningPlayerIndex < 1 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
 
-                    document.querySelectorAll('.statistic__stat')[0].appendChild(playerOneTitleSmall);
-                    document.querySelectorAll('.statistic__stat')[1].appendChild(playerTwoTitleSmall);
-                }, 1000);
+                        let playerTwoTitleSmall = document.createElement('span');
+                        playerTwoTitleSmall.innerText = this.props.data[1].name;
+                        playerTwoTitleSmall.className = `statistic-name ${winningPlayerIndex > 0 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
 
-            }, 1000);
+                        document.querySelectorAll('.statistic__stat')[0].appendChild(playerOneTitleSmall);
+                        document.querySelectorAll('.statistic__stat')[1].appendChild(playerTwoTitleSmall);
+                        document.querySelector('.btn-back').classList.remove('btn-back-hidden'); // Testing
+                    }, 500);
+
+                }, 500);
+
+            }
+
         }, delay);
 
         return jsx;

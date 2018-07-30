@@ -4,6 +4,10 @@ import { api } from '../../api/api.js';
 import { getClass, getRace } from '../../translationFunctions';
 import './FullView.css';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowLeft, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+
+
 class FullView extends Component {
 
     constructor() {
@@ -12,8 +16,8 @@ class FullView extends Component {
         this.state = {
             loading: false,
             verified: {
-                characterOne: false,
-                characterTwo: false
+                characterOne: null,
+                characterTwo: null
             },
             duelActive: false,
             data: null,
@@ -33,6 +37,21 @@ class FullView extends Component {
         } else {
             btn.classList.remove('btn-duel--ready');
         }
+    }
+
+    back(e) {
+        e.preventDefault();
+
+        document.querySelector('.statistics__area').classList.remove('statistics__area--min');
+        document.querySelector('.btn-back').classList.add('btn-back-hidden');
+        document.querySelector('.btn-duel').classList.remove('btn-duel-hidden');
+        this.setState({
+            loading: false,
+            verified: this.state.verified,
+            duelActive: false,
+            data: null,
+            players: [{}, {}]
+        });
     }
 
     // Begins the duel, makes API calls. Passes information to Statistics component if everything works out fine.
@@ -67,7 +86,7 @@ class FullView extends Component {
                 this.refs.character_one_name.value = '';
                 this.refs.character_two_name.value = '';
 
-                this.setState({...this.state, loading: true});
+                this.setState({...this.state, loading: true, verified: {characterOne: null, characterTwo: null}});
                 let error = false;
                 let data = [];
                 let completed = 0;
@@ -148,41 +167,51 @@ class FullView extends Component {
 
     // Checks if the characters exist
     handleChange(e) {
-        let character;
-        e.target.style.color = 'white';
-        if(e.target.name === 'character_one_name') {
-            character = {
-                name: this.refs.character_one_name.value,
-                realm: this.refs.character_one_realm.value,
-                region: this.refs.character_one_region.value
-            };
+        if(e.target.value) {
+            let character;
+            e.target.style.color = 'white';
+            if(e.target.name === 'character_one_name') {
+                character = {
+                    name: this.refs.character_one_name.value,
+                    realm: this.refs.character_one_realm.value,
+                    region: this.refs.character_one_region.value
+                };
+            } else {
+                character = {
+                    name: this.refs.character_two_name.value,
+                    realm: this.refs.character_two_realm.value,
+                    region: this.refs.character_two_region.value
+                };
+            }
+            if(e.target.name === 'character_one_name') {
+                this.x && clearTimeout(this.x);
+                this.x = setTimeout(() => {
+                    this.api.confirmCharacter(character.name, character.realm, character.region)
+                    .then(res => {
+                        this.setState({...this.state, verified: {characterOne: true, characterTwo: this.state.verified.characterTwo}});
+                    })
+                    .catch(err => {
+                        this.setState({...this.state, verified: {characterOne: false, characterTwo: this.state.verified.characterTwo}});
+                    })
+                }, 500);
+            } else {
+                this.y && clearTimeout(this.y);
+                this.y = setTimeout(() => {
+                    this.api.confirmCharacter(character.name, character.realm, character.region)
+                    .then(res => {
+                        this.setState({...this.state, verified: {characterOne: this.state.verified.characterOne, characterTwo: true}});
+                    })
+                    .catch(err => {
+                        this.setState({...this.state, verified: {characterOne: this.state.verified.characterOne, characterTwo: false}});
+                    })
+                }, 500);
+            }
         } else {
-            character = {
-                name: this.refs.character_two_name.value,
-                realm: this.refs.character_two_realm.value,
-                region: this.refs.character_two_region.value
-            };
-        }
-        if(e.target.name === 'character_one_name') {
-            this.x && clearTimeout(this.x);
-            this.x = setTimeout(() => {
-                this.api.confirmCharacter(character.name, character.realm, character.region)
-                .then(res => {
-                    this.setState({...this.state, verified: {characterOne: true, characterTwo: this.state.verified.characterTwo}});
-                    this.refs.character_one_name.style.color = 'green'
-                })
-                .catch(err => this.refs.character_one_name.style.color = 'red')
-            }, 500);
-        } else {
-            this.y && clearTimeout(this.y);
-            this.y = setTimeout(() => {
-                this.api.confirmCharacter(character.name, character.realm, character.region)
-                .then(res => {
-                    this.setState({...this.state, verified: {characterOne: this.state.verified.characterOne, characterTwo: true}});
-                    this.refs.character_two_name.style.color = 'green'
-                })
-                .catch(err => this.refs.character_two_name.style.color = 'red')
-            }, 500);
+            if(e.target.name === 'character_one_name') {
+                this.setState({...this.state, verified: {characterOne: null, characterTwo: this.state.verified.characterTwo}});
+            } else {
+                this.setState({...this.state, verified: {characterOne: this.state.verified.characterOne, characterTwo: null}});
+            }
         }
     }
 
@@ -197,7 +226,23 @@ class FullView extends Component {
             )}
                 <header>
                     <div className="header-field">
-                        <input ref="character_one_name" name="character_one_name" type="text" onChange={this.handleChange.bind(this)} placeholder="Enter character name.."/>
+                        <div className="search-area">
+                            <input ref="character_one_name" name="character_one_name" type="text" onChange={this.handleChange.bind(this)} placeholder="Enter character name.."/>
+                            
+                                { this.state.verified.characterOne && (
+                                    <span class="character_confirmation character_confirmation--positive" ref="character_one_confirmation">
+                                        Character found <FontAwesomeIcon icon={faCheck} />
+                                    </span>
+                                )}
+
+                                { this.state.verified.characterOne === false && (
+                                    <span class="character_confirmation character_confirmation--negative" ref="character_one_confirmation">
+                                        No Character Found <FontAwesomeIcon icon={faTimes} />
+                                    </span>
+                                )}
+
+                    
+                        </div>
                         <select ref="character_one_realm" className="header-field__dropdown">
                             <option value="ravencrest">Ravencrest</option>
                             <option value="ragnaros">Ragnaros</option>
@@ -207,7 +252,23 @@ class FullView extends Component {
                         </select>
                     </div>
                     <div className="header-field">
-                        <input ref="character_two_name" name="character_two_name" id="character_two_name"  onChange={this.handleChange.bind(this)} type="text" placeholder="Enter character name.."/>
+                    <div className="search-area">
+                            <input ref="character_two_name" name="character_two_name" type="text" onChange={this.handleChange.bind(this)} placeholder="Enter character name.."/>
+                            
+                                { this.state.verified.characterTwo && (
+                                    <span class="character_confirmation character_confirmation--positive" ref="character_one_confirmation">
+                                        Character found <FontAwesomeIcon icon={faCheck} />
+                                    </span>
+                                )}
+
+                                { this.state.verified.characterTwo === false && (
+                                    <span class="character_confirmation character_confirmation--negative" ref="character_one_confirmation">
+                                        No Character Found <FontAwesomeIcon icon={faTimes} />
+                                    </span>
+                                )}
+
+                    
+                        </div>
                         <select ref="character_two_realm" className="header-field__dropdown">
                             <option value="ravencrest">Ravencrest</option>
                             <option value="ragnaros">Ragnaros</option>
@@ -216,6 +277,9 @@ class FullView extends Component {
                             <option value="eu">EU</option>
                         </select>
                     </div>
+                    <button className="btn-back btn-back-hidden" onClick={this.back.bind(this)}>
+                        <FontAwesomeIcon icon={faArrowLeft} />
+                    </button>
                 </header>
 
                 <div className="statistics__area">

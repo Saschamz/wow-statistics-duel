@@ -1,7 +1,14 @@
+/* Root Variables */
+
+:root {
+    --green: hsl(120, 76%, 47%);
+    --red: hsl(352, 76%, 47%);
+}
 
 /* Header */
 header {
     display: flex;
+    position: relative;
     width: 100%;
 }
 
@@ -11,7 +18,7 @@ header {
     grid-template-columns: 4fr 1fr 1fr;
 }
 
-.header-field > * {
+.header-field input, .header-field select {
     padding: 10px;
     background: #222;
     color: hsla(0,0%,100%,.8);
@@ -20,8 +27,34 @@ header {
     text-align: center;
 }
 
-.header-field > *:focus {
+.header-field *:focus {
     outline: none;
+    background: #333;
+}
+
+.search-area {
+    position: relative;
+}
+
+.character_confirmation {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, calc(100% + 5px));
+    color: white;
+}
+
+.character_confirmation--positive {
+    color: var(--green);
+}
+
+.character_confirmation--negative {
+    color: var(--red);
+}
+
+.search-area input {
+    width: 100%;
+    height: 100%;
 }
 
 /* Footer */
@@ -33,10 +66,10 @@ footer {
 }
 
 .btn-duel {
-    background: hsla(0, 0%, 4% , 0.8);
-    border: 1px solid hsl(0, 0%, 100%);
+    background: hsla(0, 0%, 8% , 0.8);
+    border: 1px solid hsl(0, 0%, 60%);
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.05);
-    color: hsl(0, 0% , 100%);
+    color: hsl(0, 0% , 60%);
     cursor: not-allowed;
     position: absolute;
     left: 50%;
@@ -51,6 +84,13 @@ footer {
 
 .btn-duel--ready {
     cursor: pointer;
+    color: white;
+    background: hsla(0, 0%, 4% , 0.8);
+    border: 1px solid white;
+}
+
+.btn-duel--ready:focus {
+    background: hsla(0, 0%, 10%, 0.8)
 }
 
 .btn-duel--ready:hover {
@@ -176,6 +216,27 @@ footer > #player_two {
 .char-overlay__bg:last-child {
     right: 0;
     bottom: 0;
+}
+
+/* Back Button */
+
+.btn-back {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    cursor: pointer;
+    transform: translate(20px, calc(100% + 20px));
+    font-size: 50px;
+    z-index: 2;
+    background: none;
+    border: none;
+    color: hsla(0, 0%, 100%, 0.6);
+}
+
+.btn-back:hover {color: white;}
+
+.btn-back-hidden {
+    display: none;
 }
 
 /* Animations */
