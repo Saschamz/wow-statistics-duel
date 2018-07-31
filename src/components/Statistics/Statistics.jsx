@@ -45,6 +45,8 @@ class Statistics extends Component {
             
             // Item Level
             playerScores[index].ilvl.score = data.items.averageItemLevel * scores.ilvlMultiplier;
+            // If character has not logged in since BFA iLvL squish 18th July 2018
+            if(this.props.data[index].lastModified < 1531872000000 ) playerScores[index].ilvl.score /= 5;
 
             // Misc
             let maxProfessions, noMissingGems, petBattlesWon, positiveDuelRatio;
