@@ -1,5 +1,6 @@
 {
     "editor.tokenColorCustomizations": {
         "comments": "#A9A9A9"
-    }
+    },
+    "typescript.autoImportSuggestions.enabled": false
 }

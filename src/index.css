@@ -1,3 +1,6 @@
+@import './styles/variables.css';
+@import './styles/responsive.css';
+
 body {
   background: linear-gradient(#222, #111);
   margin: 0;
@@ -17,7 +20,3 @@ body {
 *:focus, *::before:focus, *::after:focus {
   outline: none;
 }
-
-/* bg-texture
-http://2.bp.blogspot.com/-Fp08urfL5yU/T4SrVhzeWYI/AAAAAAAAAag/fxLH1Pg9Xf8/s640/Roof_Tiles_3.jpg
-*/

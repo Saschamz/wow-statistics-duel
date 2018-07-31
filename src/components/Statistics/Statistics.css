@@ -1,11 +1,4 @@
 
-
-
-.statistics__area {
-
-}
-
-
 .statistics__area {
     width: 700px;
     position: absolute;
@@ -17,13 +10,8 @@
 }
 
 .statistics__area--min {
-    position: absolute;
-    width: 700px;
-    margin: 0;
-    bottom: 0;
-    right: 0;
-    transform: scale(.7) translate(0%, 0%);
-    transform-origin: bottom;
+    transform-origin: calc(50% + 50vw) calc(100% + 90vh);
+    transform: scale(.7) translate(calc(50vw), calc(90vh));
 }
 
 .statistic {
@@ -54,18 +42,6 @@
 
 .statistic-name--loser {
     color: hsl(352, 76%, 47%);
-}
-
-@keyframes statistic-name {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, calc(-120% - 20px));
-    }
-
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -120%);
-    }
 }
 
 .statistic:last-child {
@@ -117,6 +93,18 @@
 
 
 /* Animations */
+@keyframes statistic-name {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, calc(-120% - 20px));
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -120%);
+    }
+}
+
 @keyframes slide-up {
     0% {
         background: hsla(0, 0%, 4%, 0);
@@ -219,8 +207,7 @@
     }
 }
 
-/* Animation sequence 1s*/
-:root {--delay: 1s;}
+/* Animation sequence */
 .statistic:first-child > .statistic__arrow { animation-delay: var(--delay) }
 .statistic:first-child > .statistic__stat { animation-delay: calc(var(--delay) * 1.5) }
 

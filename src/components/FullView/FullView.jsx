@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import Statistics from '../Statistics/Statistics.jsx';
-import { api } from '../../api/api.js';
+import Statistics from '../Statistics/Statistics';
+import { api } from '../../api/api';
 import { getClass, getRace } from '../../translationFunctions';
+import { wowSvg } from '../../svgs/WowIcon';
+import { RealmOptions } from '../Misc/RealmOptions';
 import './FullView.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -218,6 +220,9 @@ class FullView extends Component {
     render() {
         return (
             <div style={{height: '100%'}}>
+            <div className="wow-svg">
+                { wowSvg }
+            </div>
             {this.state.duelActive && (
                 <div className="char-overlay">
                     <div className="char-overlay__bg" style={{backgroundImage: `url('${this.state.players[0].backgroundUrl}')`}}></div>
@@ -244,8 +249,7 @@ class FullView extends Component {
                     
                         </div>
                         <select ref="character_one_realm" className="header-field__dropdown">
-                            <option value="ravencrest">Ravencrest</option>
-                            <option value="ragnaros">Ragnaros</option>
+                            <RealmOptions />
                         </select>
                         <select ref="character_one_region" className="header-field__dropdown">
                             <option value="eu">EU</option>
@@ -270,8 +274,7 @@ class FullView extends Component {
                     
                         </div>
                         <select ref="character_two_realm" className="header-field__dropdown">
-                            <option value="ravencrest">Ravencrest</option>
-                            <option value="ragnaros">Ragnaros</option>
+                            <RealmOptions />
                         </select>
                         <select ref="character_two_region" className="header-field__dropdown">
                             <option value="eu">EU</option>

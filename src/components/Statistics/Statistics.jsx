@@ -8,7 +8,8 @@ class Statistics extends Component {
         super(props);
 
         this.state = {
-            calculated: false
+            calculated: false,
+            rendered: false
         };
     }
 
@@ -60,8 +61,7 @@ class Statistics extends Component {
             if(data.audit.emptySockets < 1) noMissingGems = scores.misc.noMissingGems;
 
             const miscTotalScore = maxProfessions + noMissingGems + petBattlesWon + positiveDuelRatio;
-            console.log(maxProfessions, noMissingGems, petBattlesWon, positiveDuelRatio);
-            console.log(miscTotalScore);
+
             playerScores[index].misc.score = miscTotalScore;
             
             // Reputation
@@ -123,7 +123,7 @@ class Statistics extends Component {
 
         this.playerScores = playerScores;
 
-        this.setState({calculated: true});
+        this.setState({calculated: true, rendered: this.state.rendered});
 
         console.log('Calculated scores: ', playerScores);
     }
@@ -131,10 +131,19 @@ class Statistics extends Component {
     renderStatistics() {
         let jsx = [];
 
+        // Mounts sometimes return 0 (bug), if this happens ignore mounts
+        console.log('playerscores', this.playerScores)
+        if(!this.state.rendered && ( !this.playerScores[0].mounts.score || !this.playerScores[1].mounts.score )) {
+            this.playerScores.forEach(player => {
+                player.mounts && delete player.mounts;
+            });
+        }
+
         for(let prop in this.playerScores[0]) {
             const winnerClass = 'statistic__stat statistic__stat--winner';
             const loserClass = 'statistic__stat statistic__stat--loser';
             let winner;
+            
             this.playerScores[0][prop].score > this.playerScores[1][prop].score ? ( winner = 0 ) : ( winner = 1 ); 
             jsx.push((
                 <div className="statistic">
@@ -155,42 +164,52 @@ class Statistics extends Component {
             ));
         }
 
-        // This should be a function called by the parent component
+        // Dynamic delay
+        let delay = 1500;
+        let totalDelay = 0;
+        for(let prop in this.playerScores[0]) {
+            totalDelay += delay;
+        }
+        // Delay loop is working, but the animation is too early when mounts are missing (BUG)
+        console.log('Delay is: ', totalDelay);
+
         // Sets the winner BG as fullscreen
-        const delay = 15000;
         const winningPlayerIndex = this.playerScores[0].totalScore.score > this.playerScores[1].totalScore.score ? 0 : 1;
         const losingPlayerIndex = winningPlayerIndex === 1 ? 0 : 1;
-        setTimeout(() => {
-            // Animate Names
-            if(document.querySelector('.player')) {
-                document.querySelectorAll('.player')[winningPlayerIndex].classList.add('player--victor');
-                document.querySelectorAll('.player')[losingPlayerIndex].classList.add('player--loser');
+        if(!this.state.rendered) {
+            this.setState({calculated: true, rendered: true});
+            setTimeout(() => {
+                // Animate Names
+                if(document.querySelector('.player')) {
+                    document.querySelectorAll('.player')[winningPlayerIndex].classList.add('player--victor');
+                    document.querySelectorAll('.player')[losingPlayerIndex].classList.add('player--loser');
 
-                // Animate Overlay
-                document.querySelectorAll('.char-overlay__bg')[winningPlayerIndex].classList.add('char-overlay__bg--fullscreen');
-
-                setTimeout(() => {
-                    document.querySelector('.statistics__area').classList.add('statistics__area--min');
+                    // Animate Overlay
+                    document.querySelectorAll('.char-overlay__bg')[winningPlayerIndex].classList.add('char-overlay__bg--fullscreen');
 
                     setTimeout(() => {
-                        let playerOneTitleSmall = document.createElement('span');
-                        playerOneTitleSmall.innerText = this.props.data[0].name;
-                        playerOneTitleSmall.className = `statistic-name ${winningPlayerIndex < 1 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
+                        document.querySelector('.statistics__area').classList.add('statistics__area--min');
 
-                        let playerTwoTitleSmall = document.createElement('span');
-                        playerTwoTitleSmall.innerText = this.props.data[1].name;
-                        playerTwoTitleSmall.className = `statistic-name ${winningPlayerIndex > 0 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
+                        setTimeout(() => {
+                            let playerOneTitleSmall = document.createElement('span');
+                            playerOneTitleSmall.innerText = this.props.data[0].name;
+                            playerOneTitleSmall.className = `statistic-name ${winningPlayerIndex < 1 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
 
-                        document.querySelectorAll('.statistic__stat')[0].appendChild(playerOneTitleSmall);
-                        document.querySelectorAll('.statistic__stat')[1].appendChild(playerTwoTitleSmall);
-                        document.querySelector('.btn-back').classList.remove('btn-back-hidden'); // Testing
+                            let playerTwoTitleSmall = document.createElement('span');
+                            playerTwoTitleSmall.innerText = this.props.data[1].name;
+                            playerTwoTitleSmall.className = `statistic-name ${winningPlayerIndex > 0 ? 'statistic-name--winner' : 'statistic-name--loser'}`;
+
+                            document.querySelectorAll('.statistic__stat')[0].appendChild(playerOneTitleSmall);
+                            document.querySelectorAll('.statistic__stat')[1].appendChild(playerTwoTitleSmall);
+                            document.querySelector('.btn-back').classList.remove('btn-back-hidden'); // Testing
+                        }, 500);
+
                     }, 500);
 
-                }, 500);
+                }
 
-            }
-
-        }, delay);
+            }, totalDelay);
+        }
 
         return jsx;
     }
