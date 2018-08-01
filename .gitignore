@@ -21,4 +21,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # hides api key
-/src/api/apikey
+/src/api/apikey.js
