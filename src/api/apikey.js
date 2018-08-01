@@ -1,0 +1,1 @@
+export const apikey = 'methnet8f5npfrqeb6a975ns43qu5925';
