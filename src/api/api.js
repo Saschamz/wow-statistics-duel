@@ -1,6 +1,6 @@
 import { apikey } from './apikey.js';
 
-const blizzard = require('blizzard.js').initialize({ apikey });
+const blizzard = require('../blizzard.js/index.js').initialize({ apikey });
 
 const requestQuery = [`
     profile, achievements, appearance, feed, guild, hunterPets, items, mounts, professions, progression, pvp, quests, reputation, statistics, stats, talents, titles, audit
