@@ -91,7 +91,7 @@ export const getRace = (raceId) => {
         break;
 
         case 4:
-        race = 'Nightelf';
+        race = 'Night Elf';
         break;
 
         case 5:
@@ -109,13 +109,37 @@ export const getRace = (raceId) => {
         case 8:
         race = 'Troll';
         break;
+
+        case 9:
+        race = 'Goblin';
+        break;
         
         case 10:
-        race = 'Bloodelf';
+        race = 'Blood Elf';
         break;
 
-        case 11:
-        race = 'Draenei';
+        case 22:
+        race = 'Worgen';
+        break;
+
+        case 26:
+        race = 'Pandaren';
+        break;
+        
+        case 27:
+        race = 'Nightborn';
+        break;
+
+        case 28:
+        race = 'Highmountain Tauren';
+        break;
+
+        case 29:
+        race = 'Void Elf';
+        break;
+
+        case 30:
+        race = 'Lightforged Draenei';
         break;
 
         default:

@@ -7,7 +7,7 @@ import { RealmOptions } from '../Misc/RealmOptions';
 import './FullView.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowLeft, faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 
 class FullView extends Component {
@@ -30,6 +30,8 @@ class FullView extends Component {
     componentDidMount() {
         this.api = api;
         this.api.init();
+
+        this.duelButton = document.querySelector('.btn-duel');
     }
 
     componentDidUpdate() {
@@ -41,111 +43,122 @@ class FullView extends Component {
         }
     }
 
-    back(e) {
-        e.preventDefault();
-
-        document.querySelector('.statistics__area').classList.remove('statistics__area--min');
-        document.querySelector('.btn-back').classList.add('btn-back-hidden');
-        document.querySelector('.btn-duel').classList.remove('btn-duel-hidden');
-        this.setState({
-            loading: false,
-            verified: this.state.verified,
-            duelActive: false,
-            data: null,
-            players: [{}, {}]
-        });
-    }
-
     // Begins the duel, makes API calls. Passes information to Statistics component if everything works out fine.
     duel() {
 
         if(!!document.querySelector('.btn-duel--ready')) {
+
+            document.querySelector('.statistics__area').classList.remove('statistics__area--min');
+
+            this.setState({
+                loading: false,
+                verified: this.state.verified,
+                duelActive: false,
+                data: null,
+                players: [{}, {}]
+            });
+
+            setTimeout(() => {
+
+                // Create character array with objects
+                const characterOne = {
+                    name: this.refs.character_one_name.value,
+                    realm: this.refs.character_one_realm.value,
+                    region: this.refs.character_one_region.value
+                };
+
+                const characterTwo = {
+                    name: this.refs.character_two_name.value,
+                    realm: this.refs.character_two_realm.value,
+                    region: this.refs.character_two_region.value
+                };
+
+                const characters = [characterOne, characterTwo];
+
+                // Basic validation
+                if( characterOne.name === characterTwo.name &&
+                    characterOne.realm === characterTwo.realm &&
+                    characterOne.region === characterTwo.region ) {
+                        alert('Error: Same Characters.');
+                } else {
+
+                    if(this.duelButton.classList.contains('btn-duel-top')) {
+                        this.duelButton.classList.add('btn-duel-top', 'btn-duel-top--hidden');
+                    } else {
+                        this.duelButton.classList.add('btn-duel-hidden');
+                        setTimeout(() => {
+                            this.duelButton.classList.add('no-display', 'btn-duel-top--hidden', 'btn-duel-top');
+                            setTimeout(() => {
+                                this.duelButton.classList.remove('no-display');
+                            }, 1000);
+                        }, 1000);
+                    }
+
+                    document.querySelectorAll('.header-field')
+                    .forEach(field => field.classList.add('header-hidden'));
+
+                    this.refs.character_one_name.value = '';
+                    this.refs.character_two_name.value = '';
+
+                    this.setState({...this.state, loading: true, verified: {characterOne: null, characterTwo: null}});
+                    let error = false;
+                    let data = [];
+                    let completed = 0;
             
-            // Create character array with objects
-            const characterOne = {
-                name: this.refs.character_one_name.value,
-                realm: this.refs.character_one_realm.value,
-                region: this.refs.character_one_region.value
-            };
-
-            const characterTwo = {
-                name: this.refs.character_two_name.value,
-                realm: this.refs.character_two_realm.value,
-                region: this.refs.character_two_region.value
-            };
-
-            const characters = [characterOne, characterTwo];
-
-            // Basic validation
-            if( characterOne.name === characterTwo.name &&
-                characterOne.realm === characterTwo.realm &&
-                characterOne.region === characterTwo.region ) {
-                    alert('Error: Same Characters.');
-            } else {
-
-                document.querySelector('footer button').classList.add('btn-duel-hidden');
-
-                this.refs.character_one_name.value = '';
-                this.refs.character_two_name.value = '';
-
-                this.setState({...this.state, loading: true, verified: {characterOne: null, characterTwo: null}});
-                let error = false;
-                let data = [];
-                let completed = 0;
-        
-                // API calls
-                characters.forEach(character => {
-                    this.api.getCharacter(character.name, character.realm, character.region)
-                    .then(res => {
-                        if(res.status === 200) {
-                            data.push(res.data);
-                            ++completed;
-                            if(completed == 2) {
-                                // THIS IS THE PROFILE IMAGES YAAY
-                                data[0].thumbnail = data[0].thumbnail.replace('avatar', 'main');
-                                data[1].thumbnail = data[1].thumbnail.replace('avatar', 'main');
-                                const img_1 = `https://render-eu.worldofwarcraft.com/character/${data[0].thumbnail}`;
-                                const img_2 = `https://render-eu.worldofwarcraft.com/character/${data[1].thumbnail}`;
-                                console.log(img_1, img_2);
-                                // THIS IS THE PROFILE IMAGES YAAY
-                                this.setState({
-                                    ...this.state,
-                                    _404: false,
-                                    loading: false,
-                                    duelActive: true,
-                                    players: [
-                                        {
-                                            name: data[0].name,
-                                            className: getClass(data[0].class).className,
-                                            classColor: getClass(data[0].class).classColor,
-                                            level: data[0].level,
-                                            race: getRace(data[0].race),
-                                            backgroundUrl: img_1
-                                        },
-                                        {
-                                            name: data[1].name,
-                                            className: getClass(data[1].class).className,
-                                            classColor: getClass(data[1].class).classColor,
-                                            level: data[1].level,
-                                            race: getRace(data[1].race),
-                                            backgroundUrl: img_2
-                                        }
-                                    ],
-                                    data
-                                });
+                    // API calls
+                    characters.forEach(character => {
+                        this.api.getCharacter(character.name, character.realm, character.region)
+                        .then(res => {
+                            if(res.status === 200) {
+                                data.push(res.data);
+                                ++completed;
+                                if(completed == 2) {
+                                    // THIS IS THE PROFILE IMAGES YAAY
+                                    data[0].thumbnail = data[0].thumbnail.replace('avatar', 'main');
+                                    data[1].thumbnail = data[1].thumbnail.replace('avatar', 'main');
+                                    const img_1 = `https://render-eu.worldofwarcraft.com/character/${data[0].thumbnail}`;
+                                    const img_2 = `https://render-eu.worldofwarcraft.com/character/${data[1].thumbnail}`;
+                                    console.log(img_1, img_2);
+                                    // THIS IS THE PROFILE IMAGES YAAY
+                                    this.setState({
+                                        ...this.state,
+                                        _404: false,
+                                        loading: false,
+                                        duelActive: true,
+                                        players: [
+                                            {
+                                                name: data[0].name,
+                                                className: getClass(data[0].class).className,
+                                                classColor: getClass(data[0].class).classColor,
+                                                level: data[0].level,
+                                                race: getRace(data[0].race),
+                                                backgroundUrl: img_1
+                                            },
+                                            {
+                                                name: data[1].name,
+                                                className: getClass(data[1].class).className,
+                                                classColor: getClass(data[1].class).classColor,
+                                                level: data[1].level,
+                                                race: getRace(data[1].race),
+                                                backgroundUrl: img_2
+                                            }
+                                        ],
+                                        data
+                                    });
+                                }
                             }
-                        }
-                    })
-                    .catch(err => {
-                        error = true;
-                        console.log(err);
+                        })
+                        .catch(err => {
+                            error = true;
+                            console.log(err);
+                        });
                     });
-                });
-        
-                if(error) {
-                    console.log('Could not find one of the characters');
+            
+                    if(error) {
+                        console.log('Could not find one of the characters');
+                    }
                 }
-            }
+            });
         }
     }
 
@@ -280,9 +293,6 @@ class FullView extends Component {
                             <option value="eu">EU</option>
                         </select>
                     </div>
-                    <button className="btn-back btn-back-hidden" onClick={this.back.bind(this)}>
-                        <FontAwesomeIcon icon={faArrowLeft} />
-                    </button>
                 </header>
 
                 <div className="statistics__area">

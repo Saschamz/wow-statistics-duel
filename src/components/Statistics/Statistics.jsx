@@ -203,7 +203,7 @@ class Statistics extends Component {
 
                             document.querySelectorAll('.statistic__stat')[0].appendChild(playerOneTitleSmall);
                             document.querySelectorAll('.statistic__stat')[1].appendChild(playerTwoTitleSmall);
-                            document.querySelector('.btn-back').classList.remove('btn-back-hidden'); // Testing
+                            document.querySelector('.btn-duel').classList.remove('btn-duel-hidden', 'btn-duel-top--hidden'); // Testing
                         }, 500);
 
                     }, 500);

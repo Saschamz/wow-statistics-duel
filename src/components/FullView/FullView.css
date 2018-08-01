@@ -4,12 +4,19 @@ header {
     display: flex;
     position: relative;
     width: 100%;
+    z-index: 5;
 }
 
 .header-field {
+    height: 100%;
     width: 50%;
     display: grid;
     grid-template-columns: 4fr 1fr 1fr;
+}
+
+.headesr-hidden {
+    transition: opacity .5s;
+    opacity: 0;
 }
 
 .header-field input, .header-field select {
@@ -56,6 +63,7 @@ header {
 footer {
     position: absolute;
     width: 100%;
+    height: 100%;
     bottom: 0px;
     left: 0;
 }
@@ -74,6 +82,7 @@ footer {
     text-transform: uppercase;
     font-weight: 800;
     letter-spacing: 6px;
+    opacity: 1;
     padding: 5px 25px;
 }
 
@@ -102,8 +111,37 @@ footer {
 }
 
 .btn-duel-hidden {
-    transition: .4s ease-in-out;
+    transition: all .4s ease-in-out;
     transform: translate(-50%, calc(100% + 40px));
+}
+
+.btn-duel-top {
+    font-size: 30px;
+    top: 0;
+    max-height: 62px;
+    background: none;
+    border: none;
+    box-shadow: none;
+    transition: all .4s ease-in-out;
+    transform: translate(-50%, 100%);
+}
+
+.btn-duel-top:focus {
+    background: none;
+}
+
+.btn-duel-top:active {
+    transform: translate(-50%, 100%);
+}
+
+.btn-duel--ready:hover {
+    background: hsla(0, 0%, 10%, 0.4);
+}
+
+.btn-duel-top--hidden {
+    top: 0;
+    opacity: 0 !important;
+    transform: translate(-50%, -100%) !important;
 }
 
 .player {
@@ -168,6 +206,7 @@ footer > #player_two {
     line-height: 1;
     color: white;
     text-shadow: 10px 10px rgba(0,0,0,.5);
+    padding-bottom: 10px;
 }
 
 .player__info {
@@ -220,15 +259,22 @@ footer > #player_two {
     left: 0;
     bottom: 0;
     cursor: pointer;
-    transform: translate(20px, calc(100% + 20px));
-    font-size: 50px;
+    transform: translate(20px, calc(50%));
+    font-size: 40px;
     z-index: 2;
     background: none;
     border: none;
-    color: hsla(0, 0%, 100%, 0.6);
+    color: hsla(0, 0%, 100%, 1);
+    animation: .5s fade-in forwards 1;
 }
 
-.btn-back:hover {color: white;}
+.btn-back__text {
+    padding-left: 10px;
+}
+
+.btn-back:hover {
+    color: goldenrod;
+}
 
 .btn-back-hidden {
     display: none;
@@ -275,5 +321,15 @@ footer > #player_two {
 
     100% {
         height: 100%;
+    }
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
     }
 }

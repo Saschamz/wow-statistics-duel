@@ -24,6 +24,9 @@
     button.btn-back {
         font-size: 30px;
     }
+    button.btn-duel-top {
+        transform: translate(-50%, 200%);
+    }
     h1.player__name {
         font-size: 40px;
     }
